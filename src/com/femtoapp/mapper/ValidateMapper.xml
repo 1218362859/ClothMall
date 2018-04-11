@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.femtoapp.mapper.ValidateMapper">
+
+
+	<select id="findValidateByPhonenum" parameterType="java.lang.String"
+		resultType="Validate">
+
+		Select * from validate where phonenum=#{phonenum} order by
+		create_time    desc    limit 1
+	</select>
+
+
+
+
+	<insert id="insertValidate" parameterType="Validate">
+		insert into
+		validate(phonenum,validateCode,create_time)
+		values(#{phonenum},#{validateCode},#{create_time})
+	</insert>
+
+
+</mapper>

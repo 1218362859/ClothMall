@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="                                               
+            http://www.springframework.org/schema/beans    
+            http://www.springframework.org/schema/beans/spring-beans.xsd    
+            http://www.springframework.org/schema/context     
+            http://www.springframework.org/schema/context/spring-context.xsd    
+            http://www.springframework.org/schema/mvc    
+            http://www.springframework.org/schema/mvc/spring-mvc.xsd  
+            http://www.springframework.org/schema/tx   
+            http://www.springframework.org/schema/tx/spring-tx.xsd  
+            http://www.springframework.org/schema/aop  
+            http://www.springframework.org/schema/aop/spring-aop.xsd ">
+	<!-- 配置handler -->
+	<!-- <bean name="/queryUser.action" class="com.femtoapp.controller.ItemsController" 
+		/> -->
+
+
+	<!-- 处理器映射器 -->
+	<!-- <bean class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping" 
+		/> -->
+
+	<!-- 处理器适配器 -->
+	<!-- <bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter" 
+		/> -->
+
+
+
+
+
+	<!--注解映射器 -->
+	<!-- <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping" 
+		/> 注解适配器 <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter" 
+		/> -->
+
+
+
+	<context:component-scan base-package="com.femtoapp.controller"></context:component-scan>
+	<mvc:annotation-driven></mvc:annotation-driven>
+
+	<!-- 视图解析器 -->
+	<bean
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+	</bean>
+	<!-- 文件上传 -->
+	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<!-- 上传文件最大尺寸为5M -->
+		<property name="maxUploadSize">
+			<value>5242880000000</value>
+		</property>
+	</bean>
+	<!-- 拦截器 -->
+	<mvc:interceptors>
+		<mvc:interceptor>
+
+			<mvc:mapping path="/**" />
+			 <bean class="com.femtoapp.interceptors.LoginInterceptors"></bean> 
+		</mvc:interceptor>
+	</mvc:interceptors> 
+
+	<!-- 全局异常处理器 只实现了HandlerExceptionResolver接口就是全局异常处理器 多个实现只执行一个 -->
+	 <bean class="com.femtoapp.exception.ClothMallExceptionResolver"></bean> 
+
+</beans>  

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.femtoapp.mapper.CategoryMapper">
+	<select id="findObjectByid" parameterType="java.lang.String"
+		resultType="com.femtoapp.pojo.CategoryCustom">
+
+		Select * from goods,category where goods.gid=category.gid and cid=#{cid}
+	</select>
+
+
+	<delete id="deleteObject" parameterType="java.lang.String">
+
+		delete from category
+		where cid=#{cid}
+	</delete>
+
+
+	<insert id="insertObject" parameterType="com.femtoapp.pojo.CategoryCustom">
+		insert into
+		category(cid,gid,name,price,inventory,min_unit,imageurl)
+		values(#{cid},#{gid},#{name},#{price},#{inventory},#{min_unit},#{imageurl})
+	</insert>
+	<!-- parameterType建议传入包装对象 resultType建议用扩展对象 -->
+	<select id="findObjectList" parameterType="com.femtoapp.pojo.CategoryQueryVo"
+		resultType="com.femtoapp.pojo.CategoryCustom">
+		select category.* from category
+
+		<where>
+			<include refid="query_where"></include>
+
+		</where>
+	</select>
+	<update id="updateObject" parameterType="com.femtoapp.pojo.CategoryCustom">
+		update category as
+		c,goods as g set
+		c.gid=#{gid},c.name=#{name},c.price=#{price},c.inventory=#{inventory}
+		,c.min_unit=#{min_unit},c.imageurl=#{imageurl},
+		sid=#{sid},g.title=#{title},g.unit=#{unit},g.composit=#{composit},g.kezhong=#{kezhong},g.menfu=#{menfu},g.
+		color=#{color},g.gongyi=#{gongyi},g.zhiwuzuzhi=#{zhiwuzuzhi},g.uses=#{uses},g.origin=#{origin},g.site=#{site},g.
+		brand=#{brand},g.state=#{state},g.create_time=#{create_time},g.score=#{score},g.sales=#{sales}
+
+		where
+		g.gid=c.gid and
+		c.cid=#{cid}
+
+	</update>
+
+	<sql id="query_where">
+		<!-- <if test="categoryCustom!=null"> <if test="categoryCustom.user_id!=null 
+			and categoryCustom.user_id!=''"> and category.user_id like '%${categoryCustom.user_id}%' 
+			</if> <if test="categoryCustom.title!=null and categoryCustom.title!=''"> 
+			and category.title like '%${categoryCustom.title}%' </if> <if test="categoryCustom.level!=null 
+			and categoryCustom.level!=''"> and category.level like '%${categoryCustom.level}%' 
+			</if> <if test="categoryCustom.mileage!=null and categoryCustom.mileage!=''"> 
+			and category.mileage like '%${categoryCustom.mileage}%' </if> </if> -->
+	</sql>
+</mapper>

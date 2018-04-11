@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.femtoapp.mapper.SellerMapper">
+	<select id="findObjectByid" parameterType="java.lang.String"
+		resultType="Seller">
+
+		Select * from seller where sid=#{sid}
+	</select>
+	
+	<select id="findSellerByUsername" parameterType="java.lang.String"
+		resultType="Seller">
+
+		Select * from seller where username=#{username}
+	</select>
+	<select id="findSellerByPhonenum" parameterType="java.lang.String"
+		resultType="Seller">
+
+		Select * from seller where phonenum=#{phonenum} order by
+		create_time    desc    limit 1
+	</select>
+
+	<resultMap type="com.femtoapp.pojo.Seller" id="Seller_Goods_CategoryResultMap">
+
+		<id column="sid" property="sid" />
+		<result column="name" property="name" />
+		<result column="type" property="type" />
+		<collection property="goodsList" ofType="com.femtoapp.pojo.Goods">
+
+			<id column="gid" property="gid" />
+			<result column="sid" property="sid" />
+			<result column="title" property="title" />
+			<result column="unit" property="unit" />
+			<result column="composit" property="composit" />
+			<result column="kezhong" property="kezhong" />
+			<result column="menfu" property="menfu" />
+			<result column="color" property="color" />
+			<result column="gongyi" property="gongyi" />
+			<result column="zhiwuzuzhi" property="zhiwuzuzhi" />
+			<result column="uses" property="uses" />
+			<result column="origin" property="origin" />
+			<result column="site" property="site" />
+			<result column="brand" property="brand" />
+			<result column="state" property="state" />
+			<result column="create_time" property="create_time" />
+			<result column="score" property="score" />
+			<result column="sales" property="sales" />
+			<collection property="categoryList" ofType="com.femtoapp.pojo.Category">
+				<id column="cid" property="cid" />
+				<result column="name" property="name" />
+				<result column="price" property="price" />
+				<result column="inventory" property="inventory" />
+				<result column="min_unit" property="min_unit" />
+				<result column="imageurl" property="imageurl" />
+
+
+			</collection>
+		</collection>
+
+	</resultMap>
+	<select id="findSeller_Goods_CategoryResultMap" resultMap="Seller_Goods_CategoryResultMap">
+
+		SELECT
+		seller.sid,
+		seller. NAME,
+		seller. type,
+		goods.*,
+		category.cid,
+		category. NAME,
+		category. price,
+		category.imageurl,
+		category.inventory,
+		category.min_unit
+
+		FROM
+		goods,
+		category,
+		seller
+		WHERE
+		goods.gid =
+		category.gid
+		AND goods.sid = seller.sid
+
+	</select>
+
+	<delete id="deleteObject" parameterType="java.lang.String">
+
+		delete from seller where
+		sid=#{sid}
+	</delete>
+
+
+	<insert id="insertObject" parameterType="Seller">
+
+		insert into
+		seller(sid,name,create_time,type,username,password,phonenum,describes,seller_name,photourl,state)
+		values(#{sid}, #{name}, #{create_time}, #{type}, #{username},
+		#{password}, #{phonenum}, #{describes} ,#{seller_name},#{photourl},#{state})
+	</insert>
+	<!-- parameterType建议传入包装对象 resultType建议用扩展对象 -->
+	<select id="findObjectList" parameterType="com.femtoapp.pojo.SellerQueryVo"
+		resultType="com.femtoapp.pojo.SellerCustom">
+		select seller.* from seller
+
+		<where>
+			<include refid="query_where"></include>
+
+		</where>
+		order by create_time desc
+	</select>
+	<update id="updateObject" parameterType="Seller">
+		update seller set
+		name=#{name},create_time=#{create_time},type=#{type},username=#{username}
+		,password=#{password},phonenum=#{phonenum},
+		describes=#{describes},seller_name=#{seller_name},photourl=#{photourl},state=#{state}
+		where
+		sid=#{sid}
+
+	</update>
+
+	<sql id="query_where">
+		<if test="sellerCustom!=null">
+			<if test="sellerCustom.sid!=null 		and sellerCustom.sid!=''">
+				and seller.sid like '%${sellerCustom.sid}%'
+			</if>
+			<if test="sellerCustom.name!=null and sellerCustom.name!=''">
+				and seller.name like '%${sellerCustom.name}%' </if>
+			<if test="sellerCustom.type!=null 	and sellerCustom.type!=''">
+				and seller.type like '%${sellerCustom.type}%'
+			</if>
+			<if test="sellerCustom.username!=null and sellerCustom.username!=''">
+				and seller.username like '%${sellerCustom.username}%'
+			</if>
+			<if test="sellerCustom.phonenum!=null and sellerCustom.phonenum!=''">
+			and seller.phonenum like '%${sellerCustom.phonenum}%'
+		</if>
+		
+		<if test="sellerCustom.state!=null and sellerCustom.state!=''">
+			and seller.state = #{sellerCustom.state}
+		</if>
+		</if>
+
+		
+	</sql>
+</mapper>

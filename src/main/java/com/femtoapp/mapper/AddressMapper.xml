@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.femtoapp.mapper.AddressMapper">
+	<select id="findObjectByid" parameterType="java.lang.String"
+		resultType="Address">
+
+		Select * from address where aid=#{aid}
+	</select>
+
+
+	<delete id="deleteObject" parameterType="java.lang.String">
+
+		delete from address where aid=#{aid}
+	</delete>
+
+
+	<insert id="insertObject" parameterType="Address">
+		insert into
+		address(aid,uid,site,phonenum,name)
+		values(#{aid},#{uid},#{site},#{phonenum},#{name})
+	</insert>
+	<!-- parameterType建议传入包装对象 resultType建议用扩展对象 -->
+	<select id="findObjectList" parameterType="com.femtoapp.pojo.AddressQueryVo"
+		resultType="com.femtoapp.pojo.AddressCustom">
+		select address.* from address 
+		
+		<where>
+			<include refid="query_where"></include>
+
+		</where>
+	</select>
+	<update id="updateObject" parameterType="Address">
+		update address set
+		uid=#{uid},site=#{site},phonenum=#{phonenum},name=#{name}
+		where
+		aid=#{aid}
+
+	</update>
+
+	<sql id="query_where">
+	  	<if test="addressCustom!=null">
+			<if test="addressCustom.uid!=null and addressCustom.uid!=''">
+				and address.uid like '%${addressCustom.uid}%'
+			</if>
+
+			<if test="addressCustom.phonenum!=null and addressCustom.phonenum!=''">
+			and	address.phonenum like '%${addressCustom.phonenum}%'
+			</if>
+			<if test="addressCustom.site!=null and addressCustom.site!=''">
+			and	address.site like '%${addressCustom.site}%'
+			</if>
+			<if test="addressCustom.name!=null and addressCustom.name!=''">
+			and	address.name like '%${addressCustom.name}%'
+			</if>
+			
+		</if>
+		
+	</sql>
+</mapper>

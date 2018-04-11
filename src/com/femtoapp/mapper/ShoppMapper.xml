@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.femtoapp.mapper.ShoppMapper">
+	<select id="findObjectByid" parameterType="java.lang.String"
+		resultType="Shopp">
+
+		Select * from shopp where scid=#{scid}
+	</select>
+
+
+	<delete id="deleteObject" parameterType="java.lang.String">
+
+		delete from shopp where scid=#{scid}
+	</delete>
+
+
+	<insert id="insertObject" parameterType="Shopp">
+		insert into
+		shopp(scid,gid,uid,counts,create_time)
+		values(#{scid},#{gid},#{uid},#{counts},#{create_time})
+	</insert>
+	<!-- parameterType建议传入包装对象 resultType建议用扩展对象 -->
+	<select id="findObjectList" parameterType="com.femtoapp.pojo.ShoppQueryVo"
+		resultType="com.femtoapp.pojo.ShoppCustom">
+		select shopp.* from shopp 
+		
+		<where>
+			<include refid="query_where"></include>
+
+		</where>
+	</select>
+	<update id="updateObject" parameterType="Shopp">
+		update shopp set
+		gid=#{gid},uid=#{uid},counts=#{counts},create_time=#{create_time}
+		where
+		scid=#{scid}
+
+	</update>
+
+	<sql id="query_where">
+	<!--  	<if test="shoppCustom!=null">
+			<if test="shoppCustom.user_id!=null and shoppCustom.user_id!=''">
+				and shopp.user_id like '%${shoppCustom.user_id}%'
+			</if>
+
+			<if test="shoppCustom.title!=null and shoppCustom.title!=''">
+			and	shopp.title like '%${shoppCustom.title}%'
+			</if>
+			<if test="shoppCustom.level!=null and shoppCustom.level!=''">
+			and	shopp.level like '%${shoppCustom.level}%'
+			</if>
+			<if test="shoppCustom.mileage!=null and shoppCustom.mileage!=''">
+			and	shopp.mileage like '%${shoppCustom.mileage}%'
+			</if>
+			
+		</if>
+		-->
+	</sql>
+</mapper>

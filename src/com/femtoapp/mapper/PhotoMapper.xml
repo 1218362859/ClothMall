@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.femtoapp.mapper.PhotoMapper">
+	<select id="findObjectByid" parameterType="java.lang.String"
+		resultType="Photo">
+
+		Select * from photo where pid=#{pid}
+	</select>
+
+
+	<delete id="deleteObject" parameterType="java.lang.String">
+
+		delete from photo where pid=#{pid}
+	</delete>
+
+
+	<insert id="insertObject" parameterType="Photo">
+		insert into
+		photo(pid,gid,cid,type,imageurl,create_time)
+		values(#{pid},#{gid},#{cid},#{type},#{imageurl},#{create_time})
+	</insert>
+	<!-- parameterType建议传入包装对象 resultType建议用扩展对象 -->
+	<select id="findObjectList" parameterType="com.femtoapp.pojo.PhotoQueryVo"
+		resultType="com.femtoapp.pojo.PhotoCustom">
+		select photo.* from photo 
+		
+		<where>
+			<include refid="query_where"></include>
+
+		</where>
+	</select>
+	<update id="updateObject" parameterType="Photo">
+		update photo set
+		gid=#{gid},cid=#{cid},type=#{type},imageurl=#{imageurl},create_time=#{create_time}
+		where
+		pid=#{pid}
+
+	</update>
+
+	<sql id="query_where">
+	<!--  	<if test="photoCustom!=null">
+			<if test="photoCustom.user_id!=null and photoCustom.user_id!=''">
+				and photo.user_id like '%${photoCustom.user_id}%'
+			</if>
+
+			<if test="photoCustom.title!=null and photoCustom.title!=''">
+			and	photo.title like '%${photoCustom.title}%'
+			</if>
+			<if test="photoCustom.level!=null and photoCustom.level!=''">
+			and	photo.level like '%${photoCustom.level}%'
+			</if>
+			<if test="photoCustom.mileage!=null and photoCustom.mileage!=''">
+			and	photo.mileage like '%${photoCustom.mileage}%'
+			</if>
+			
+		</if>
+		-->
+	</sql>
+</mapper>

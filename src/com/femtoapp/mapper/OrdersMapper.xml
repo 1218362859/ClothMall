@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.femtoapp.mapper.OrdersMapper">
+	<select id="findObjectByid" parameterType="java.lang.String"
+		resultType="Orders">
+
+		Select * from orders where oid=#{oid}
+	</select>
+
+
+	<delete id="deleteObject" parameterType="java.lang.String">
+
+		delete from orders where
+		oid=#{oid}
+	</delete>
+
+
+	<insert id="insertObject" parameterType="Orders">
+		insert into
+		orders(oid,sid,gid,aid,counts,price,courier_number,state,note)
+		values(#{oid},#{sid},#{gid},#{aid},#{counts},#{price},#{courier_number},#{note})
+	</insert>
+	<!-- parameterType建议传入包装对象 resultType建议用扩展对象 -->
+	<select id="findObjectList" parameterType="com.femtoapp.pojo.OrdersQueryVo"
+		resultType="com.femtoapp.pojo.OrdersCustom">
+		SELECT
+		orders.*,
+
+
+		category. NAME category_name,
+		category.price category_price,
+		category.imageurl category_imageurl,
+		address.site address_site,
+		address.phonenum address_phonenum,
+		address. NAME address_name,
+		goods.title goods_title,
+		goods.site goods_site,
+		seller. NAME seller_name,
+		seller.phonenum seller_phonenum,
+		seller.photourl seller_photourl,
+		seller.seller_name seller_seller_name,
+		USER .username user_username,
+		USER .nickname user_nickname,
+		USER .photourl user_photourl
+		FROM
+		orders,
+		category,
+		address,
+		goods,
+		seller,
+		USER
+
+
+		<where>
+			<include refid="query_where"></include>
+
+		</where>
+		order by create_time desc
+	</select>
+	<update id="updateObject" parameterType="Orders">
+		update orders set
+		sid=#{sid},gid=#{gid},aid=#{aid},counts=#{counts},price=#{price},courier_number=#{courier_number},
+		state=#{state},note=#{note}
+		where
+		oid=#{oid}
+
+	</update>
+
+	<sql id="query_where">
+		orders.cid = category.cid
+		AND orders.aid = address.aid
+		AND category.gid = goods.gid
+		AND goods.sid = seller.sid
+		AND address.uid = `user`.uid
+		<if test="ordersCustom!=null">
+			<if test="ordersCustom.oid!=null 
+			and ordersCustom.oid!=''"> and orders.oid like '%${ordersCustom.oid}%'
+			</if>
+			<if test="ordersCustom.courier_number!=null and ordersCustom.courier_number!=''"> and
+				orders.courier_number like '%${ordersCustom.courier_number}%' </if>
+			
+			<if test="ordersCustom.create_time!=null 		and ordersCustom.create_time!=''">
+			
+			 and orders.create_time like '%${ordersCustom.create_time}%'
+			</if>
+			
+			
+			<if test="ordersCustom.seller_name!=null and ordersCustom.seller_name!=''">
+				and seller.name like '%${ordersCustom.seller_name}%' </if>
+				
+				<if test="ordersCustom.seller_phonenum!=null and ordersCustom.seller_phonenum!=''">
+				and seller.phonenum like '%${ordersCustom.seller_phonenum}%' </if>
+				
+				<if test="ordersCustom.user_username!=null and ordersCustom.user_username!=''">
+				and user.username like '%${ordersCustom.user_username}%' </if>
+				<if test="ordersCustom.address_phonenum!=null and ordersCustom.address_phonenum!=''">
+				and address.phonenum like '%${ordersCustom.address_phonenum}%' </if>
+				
+		</if>
+	</sql>
+</mapper>

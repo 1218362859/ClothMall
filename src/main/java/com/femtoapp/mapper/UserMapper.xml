@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.femtoapp.mapper.UserMapper">
+	<select id="findObjectByid" parameterType="java.lang.String"
+		resultType="User">
+
+		Select * from user where uid=#{uid}
+	</select>
+
+<select id="findUserByUsername" parameterType="java.lang.String"
+		resultType="User">
+
+		Select * from user where username=#{username}
+	</select>
+	<select id="findUserByPhonenum" parameterType="java.lang.String"
+		resultType="User">
+
+		Select * from user where phonenum=#{phonenum} order by
+		create_time    desc    limit 1
+	</select>
+	
+	<delete id="deleteObject" parameterType="java.lang.String">
+
+		delete from user where uid=#{uid}
+	</delete>
+
+
+	<insert id="insertObject" parameterType="User">
+		insert into
+		user(uid,username,password,phonenum,weight,height,birthday,sex,nickname,photourl,create_time,state,power)
+		values(#{uid},#{username},#{password},#{phonenum},#{weight},#{height},#{birthday},#{sex},#{nickname},#{photourl},#{create_time},#{state},#{power})
+	</insert>
+	<!-- parameterType建议传入包装对象 resultType建议用扩展对象 -->
+	<select id="findObjectList" parameterType="com.femtoapp.pojo.UserQueryVo"
+		resultType="com.femtoapp.pojo.UserCustom">
+		select user.* from user 
+		
+		<where>
+			<include refid="query_where"></include>
+
+		</where>
+		order by create_time desc
+	</select>
+	<update id="updateObject" parameterType="User">
+		update user set
+		username=#{username},password=#{password},phonenum=#{phonenum}
+		,weight=#{weight},height=#{height},birthday=#{birthday},sex=#{sex},nickname=#{nickname},photourl=#{photourl},state=#{state},power=#{power}
+		where
+		uid=#{uid}
+
+	</update>
+
+	<sql id="query_where">
+	 	<if test="userCustom!=null">
+			<if test="userCustom.nickname!=null and userCustom.nickname!=''">
+				and user.nickname like '%${userCustom.nickname}%'
+			</if>
+
+			<if test="userCustom.uid!=null and userCustom.uid!=''">
+			and	user.uid like '%${userCustom.uid}%'
+			</if>
+			<if test="userCustom.username!=null and userCustom.username!=''">
+			and	user.username like '%${userCustom.username}%'
+			</if>
+			<if test="userCustom.birthday!=null and userCustom.birthday!=''">
+			and	user.birthday like '%${userCustom.birthday}%'
+			</if>
+			<if test="userCustom.phonenum!=null and userCustom.phonenum!=''">
+			and	user.phonenum like '%${userCustom.phonenum}%'
+			</if>
+		</if>
+	
+	</sql>
+</mapper>

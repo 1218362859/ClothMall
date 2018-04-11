@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.femtoapp.mapper.GoodsMapper">
+	<select id="findObjectByid" parameterType="java.lang.String"
+		resultType="Goods">
+
+		Select * from goods where gid=#{gid}
+	</select>
+
+
+	<delete id="deleteObject" parameterType="java.lang.String">
+
+		delete from goods where gid=#{gid}
+	</delete>
+
+
+	<insert id="insertObject" parameterType="com.femtoapp.pojo.CategoryCustom">
+		insert into
+		goods(gid,sid,title,unit,composit,kezhong,menfu,color,gongyi,zhiwuzuzhi,uses,origin,site,brand,state,create_time,score,sales)
+		values(#{gid},#{sid},#{title},#{unit},#{composit},#{kezhong},#{menfu},#{color},#{gongyi},#{zhiwuzuzhi},#{uses},#{origin},#{site},#{brand},#{state},#{create_time},#{score},#{sales})
+	</insert>
+	<!-- parameterType建议传入包装对象 resultType建议用扩展对象 -->
+	<select id="findObjectList" parameterType="com.femtoapp.pojo.GoodsQueryVo"
+		resultType="com.femtoapp.pojo.GoodsCustom">
+		select goods.*,category.*  from goods,category 
+		
+		<where>
+			<include refid="query_where"></include>
+
+		</where>
+		
+		order by goods.create_time desc
+	</select>
+	<update id="updateObject" parameterType="Goods">
+		update goods set
+		sid=#{sid},title=#{title},unit=#{unit},composit=#{composit},kezhong=#{kezhong},menfu=#{menfu},
+			color=#{color},gongyi=#{gongyi},zhiwuzuzhi=#{zhiwuzuzhi},uses=#{uses},origin=#{origin},site=#{site},
+				brand=#{brand},state=#{state},create_time=#{create_time},score=#{score},sales=#{sales}
+		where
+		gid=#{gid}
+
+	</update>
+
+	<sql id="query_where">
+		goods.gid=category.gid
+	  	<if test="goodsCustom!=null">
+			<if test="goodsCustom.gid!=null and goodsCustom.gid!=''">
+				and goods.gid like '%${goodsCustom.gid}%'
+			</if>
+
+			<if test="goodsCustom.title!=null and goodsCustom.title!=''">
+			and	goods.title like '%${goodsCustom.title}%'
+			</if>
+			<if test="goodsCustom.sid!=null and goodsCustom.sid!=''">
+			and	goods.sid like '%${goodsCustom.sid}%'
+			</if>
+			<if test="goodsCustom.brand!=null and goodsCustom.brand!=''">
+			and	goods.brand like '%${goodsCustom.brand}%'
+			</if>
+				<if test="goodsCustom.state!=null and goodsCustom.state!=''">
+			and	goods.state like '%${goodsCustom.state}%'
+			</if>
+				<if test="goodsCustom.name!=null and goodsCustom.name!=''">
+			and	category.name like '%${goodsCustom.name}%'
+			</if>
+			
+		</if>
+	
+	</sql>
+</mapper>

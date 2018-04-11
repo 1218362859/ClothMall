@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.femtoapp.mapper.CollectMapper">
+	<select id="findObjectByid" parameterType="java.lang.String"
+		resultType="Collect">
+
+		Select * from collect where coid=#{coid}
+	</select>
+
+
+	<delete id="deleteObject" parameterType="java.lang.String">
+
+		delete from collect where coid=#{coid}
+	</delete>
+
+
+	<insert id="insertObject" parameterType="Collect">
+		insert into
+		collect(coid,type,gid,sid,create_time)
+		values(#{coid},#{type},#{gid},#{sid},#{create_time})
+	</insert>
+	<!-- parameterType建议传入包装对象 resultType建议用扩展对象 -->
+	<select id="findObjectList" parameterType="com.femtoapp.pojo.CollectQueryVo"
+		resultType="com.femtoapp.pojo.CollectCustom">
+		select collect.* from collect 
+		
+		<where>
+			<include refid="query_where"></include>
+
+		</where>
+	</select>
+	<update id="updateObject" parameterType="Collect">
+		update collect set
+		type=#{type},gid=#{gid},sid=#{sid},create_time=#{create_time}
+		where
+		coid=#{coid}
+
+	</update>
+
+	<sql id="query_where">
+	<!--  	<if test="collectCustom!=null">
+			<if test="collectCustom.user_id!=null and collectCustom.user_id!=''">
+				and collect.user_id like '%${collectCustom.user_id}%'
+			</if>
+
+			<if test="collectCustom.title!=null and collectCustom.title!=''">
+			and	collect.title like '%${collectCustom.title}%'
+			</if>
+			<if test="collectCustom.level!=null and collectCustom.level!=''">
+			and	collect.level like '%${collectCustom.level}%'
+			</if>
+			<if test="collectCustom.mileage!=null and collectCustom.mileage!=''">
+			and	collect.mileage like '%${collectCustom.mileage}%'
+			</if>
+			
+		</if>
+		-->
+	</sql>
+</mapper>

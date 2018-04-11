@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.femtoapp.mapper.CollectMapper">
+	<select id="findObjectByid" parameterType="java.lang.String"
+		resultType="Collect">
+
+		Select * from collect where coid=#{coid}
+	</select>
+
+
+	<delete id="deleteObject" parameterType="java.lang.String">
+
+		delete from collect
+		where coid=#{coid}
+	</delete>
+
+
+	<insert id="insertObject" parameterType="Collect">
+		insert into
+		collect(coid,type,cid,sid,create_time,uid)
+		values(#{coid},#{type},#{cid},#{sid},#{create_time},#{uid})
+	</insert>
+
+
+	<select id="findCollectSellerListResultMap" resultMap="CollectSellerListResultMap">
+
+		select
+		s.sid ,
+		s.name ,
+		s.photourl ,
+		p.imageurl ,
+		p.type ,
+		co.type,
+		co.coid
+
+		FROM seller s,collect co,photo p
+
+		<where>
+			<include refid="query_findCollectSellerListResultMap_where"></include>
+
+		</where>
+
+
+	</select>
+
+	<select id="findCollectCategoryListResultMap" resultMap="CollectCategoryListResultMap">
+		select
+		co.coid ,
+		co.type,
+
+		co.create_time,
+		co.uid,
+		g.gid ,
+		g.title ,
+		g.composit ,
+		g.menfu ,
+		c.cid,
+		c.price ,
+		c.imageurl 
+
+		from
+		collect co,
+		goods g,
+		category c
+
+
+
+		<where>
+			<include refid="query_findCollectCategoryListResultMap_where"></include>
+
+		</where>
+		order by co.create_time desc
+
+	</select>
+
+
+
+	<sql id="query_findCollectCategoryListResultMap_where">
+		c.gid=g.gid and co.cid=c.cid
+		<if test="uid!=null and uid!=''">
+			and co.uid=#{uid}
+		</if>
+
+		<if test="co_type!=null and co_type!=''">
+			and co.type=#{co_type}
+		</if>
+
+
+	</sql>
+
+
+	<resultMap type="com.femtoapp.pojo.Collect" id="CollectCategoryListResultMap">
+		<id column="coid" property="coid" />
+		<result column="type" property="type" />
+		<result column="create_time" property="create_time" />
+		<result column="uid" property="uid" />
+		<association property="goods" javaType="com.femtoapp.pojo.Goods">
+			<id column="gid" property="gid" />
+			<result column="title" property="title" />
+			<result column="composit" property="composit" />
+			<result column="menfu" property="menfu" />
+		</association>
+		<association property="category" javaType="com.femtoapp.pojo.Category">
+			<id column="cid" property="cid" />
+			<result column="price" property="price" />
+			<result column="imageurl" property="imageurl" />
+		</association>
+	</resultMap>
+
+
+	<sql id="query_findCollectSellerListResultMap_where">
+		s.sid=co.sid and p.sid=co.sid
+		<if test="p_type!=null and p_type!=''">
+			and p.type=#{p_type}
+		</if>
+
+		<if test="co_type!=null and co_type!=''">
+			and co.type=#{co_type}
+		</if>
+		<if test="uid!=null and uid!=''">
+			and co.uid=#{uid}
+		</if>
+
+
+	</sql>
+
+	<resultMap type="com.femtoapp.pojo.Collect" id="CollectSellerListResultMap">
+		<id column="coid" property="coid" />
+		<result column="type" property="type" />
+		<association property="seller" javaType="com.femtoapp.pojo.Seller">
+			<id column="sid" property="sid" />
+			<result column="name" property="name" />
+			<result column="photourl" property="photourl" />
+		</association>
+		<!-- 集合中的property须为oftype定义的pojo对象的属性 -->
+		<collection property="photoList" ofType="com.femtoapp.pojo.Photo">
+			<id column="pid" property="pid" />
+			<result column="imageurl" property="imageurl" />
+			<result column="type" property="type" />
+		</collection>
+	</resultMap>
+
+	<!-- 查询公司收藏 ResulrType -->
+	<select id="findCollectSellerList" parameterType="java.lang.String"
+		resultType="com.femtoapp.pojo.CollectCustom">
+		select
+		s.sid as s_sid,
+		s.name as s_name,
+		s.photourl as
+		p_photourl,
+		p.imageurl as p_imageurl,
+		p.type as p_type,
+		co.type
+
+
+		FROM
+		seller s,collect co,photo p
+		where s.sid=co.sid and p.sid=co.sid and
+		p.type="卖家首页图" and co.type="公司" and
+		co.uid=#{uid}
+
+	</select>
+
+	<!-- parameterType建议传入包装对象 resultType建议用扩展对象 -->
+	<select id="findObjectList" parameterType="com.femtoapp.pojo.CollectQueryVo"
+		resultType="com.femtoapp.pojo.CollectCustom">
+		select collect.* from collect
+
+		<where>
+			<include refid="query_where"></include>
+
+		</where>
+	</select>
+	<update id="updateObject" parameterType="Collect">
+		update collect set
+		type=#{type},cid=#{cid},sid=#{sid},create_time=#{create_time},uid=#{uid}
+		where
+		coid=#{coid}
+
+	</update>
+
+	<sql id="query_where">
+		<if test="collectCustom!=null">
+			<if test="collectCustom.uid!=null and collectCustom.uid!=''">
+				and collect.uid like '%${collectCustom.uid}%'
+			</if>
+
+			<if test="collectCustom.type!=null and collectCustom.type!=''">
+				and collect.type like '%${collectCustom.type}%'
+			</if>
+			<if test="collectCustom.cid!=null and collectCustom.cid!=''">
+				and collect.cid like '%${collectCustom.cid}%'
+			</if>
+			<if test="collectCustom.sid!=null and collectCustom.sid!=''">
+				and collect.sid like '%${collectCustom.sid}%'
+			</if>
+
+		</if>
+
+	</sql>
+</mapper>

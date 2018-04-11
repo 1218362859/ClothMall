@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="                                               
+            http://www.springframework.org/schema/beans    
+            http://www.springframework.org/schema/beans/spring-beans.xsd    
+            http://www.springframework.org/schema/context     
+            http://www.springframework.org/schema/context/spring-context.xsd    
+            http://www.springframework.org/schema/mvc    
+            http://www.springframework.org/schema/mvc/spring-mvc.xsd  
+            http://www.springframework.org/schema/tx   
+            http://www.springframework.org/schema/tx/spring-tx.xsd  
+            http://www.springframework.org/schema/aop  
+            http://www.springframework.org/schema/aop/spring-aop.xsd ">
+
+
+	<!-- 导入所有文件名为properties的文件 -->
+	<context:property-placeholder location="classpath:jdbc.properties" ignore-unresolvable="true" />
+	<!-- 配置数据源，c3p0 -->
+	<!-- 数据源 -->
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+			<property name="driverClass" value="${jdbc.driver}" />
+		<property name="jdbcUrl" value="${jdbc.url}" />
+		<property name="user" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+		<!-- 连接池中保留的最大连接数 默认值为15 -->
+		<property name="maxPoolSize" value="${jdbc.maxPoolSize}" />
+		<!-- 连接池中保留的最小连接数 默认值为3 -->
+		<property name="minPoolSize" value="${jdbc.minPoolSize}" />
+		<!-- 最大空闲时间。60秒内未使用则连接被丢弃 若为0 则永不丢弃 默认值为0 -->
+		<property name="maxIdleTime" value="${jdbc.maxIdleTime}" />
+		<!-- #每隔多少秒检查所有连接池中的空闲连接。Default: 0 -->
+		<property name="checkoutTimeout" value="${jdbc.checkoutTimeout}" />
+		<!-- #初始化时获取连接数，取值应在minPoolSize与maxPoolSize之间。Default: 3   -->
+		<property name="initialPoolSize" value="${jdbc.initialPoolSize}" />
+	</bean>
+
+	<!-- sqlSessionFactory -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<!-- 数据库连接池 -->
+		<property name="dataSource" ref="dataSource" />
+		<!-- 加载mybatis全局配置文件 -->
+		<property name="configLocation" value="classpath:sqlMapConfig.xml" />
+	</bean>
+
+	<context:component-scan base-package="com.femtoapp.service" />
+
+	<!-- 管理mapper扫描器 -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<!-- 扫描的dao包路径，如果需要扫描多个包，中间使用半角逗号隔开 -->
+		<property name="basePackage" value="com.femtoapp.mapper" />
+		 <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>  
+	</bean>
+
+	
+
+</beans>           
